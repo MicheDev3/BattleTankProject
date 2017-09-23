@@ -51,17 +51,12 @@ void UTankAimingComponent::AimAt(FVector WorldSpaceAim, float LaunchSpeed)
 	if (bHaveAimSolution)
 	{
 		auto AimDirection = OutLunchVelocity.GetSafeNormal();
-		MoveBarrelTowards(AimDirection);
-		MoveTurretAround(AimDirection);
-		//UE_LOG(LogTemp, Warning, TEXT("%f: Aim solve found"), Time)
-	} else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%f: No aim solve found"), Time)
-	}
+		MoveBarrelToAim(AimDirection);
+	} 
 
 }
 
-void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+void UTankAimingComponent::MoveBarrelToAim(FVector AimDirection)
 {
 	// Work-out difference between current barrel reaction, and AimDirection
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
@@ -69,15 +64,7 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	auto DeltaRotator = AimRotator - BarrelRotator;
 
 	Barrel->Elevate(DeltaRotator.Pitch);
-}
-
-void UTankAimingComponent::MoveTurretAround(FVector AimDirection)
-{
-	// Work-out difference between current barrel reaction, and AimDirection
-	auto TurretRotation = Turret->GetForwardVector().Rotation();
-	auto AimRotator = AimDirection.Rotation();
-	auto DeltaRotator = AimRotator - TurretRotation;
-
 	Turret->Rotate(DeltaRotator.Yaw);
 }
+
 
