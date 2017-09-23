@@ -40,17 +40,18 @@ void ATank::SetTurretReference(UTankTurret* TurretToSet)
 
 void ATank::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fired!!!"));
 
 	if (!Barrel) { return; }
 
 	// Spawn a projectile at the socket location on the barrel
 	
-	GetWorld()->SpawnActor<AProjectile>(
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 		ProjectileBlueprint,
 		Barrel->GetSocketLocation(FName("Projectile")),
 		Barrel->GetSocketRotation(FName("Projectile"))
-		);
+	);
+
+	Projectile->LaunchProjectile(LaunchSpeed);
 }
 
 // Called to bind functionality to input
