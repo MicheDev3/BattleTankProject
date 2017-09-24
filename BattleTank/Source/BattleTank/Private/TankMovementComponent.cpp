@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Michele Sarigu
 
 #include "BattleTank.h"
 #include "TankTrack.h"
@@ -6,7 +6,6 @@
 
 void UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet)
 {
-	if (!LeftTrackToSet || !RightTrackToSet) { return; }
 	LeftTrack = LeftTrackToSet;
 	RightTrack = RightTrackToSet;
 }
@@ -14,9 +13,30 @@ void UTankMovementComponent::Initialise(UTankTrack* LeftTrackToSet, UTankTrack* 
 
 void UTankMovementComponent::IntentMoveFoward(float Throw)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Intent move forward throw: %f"), Throw);
+	if (!LeftTrack || !RightTrack) { return; }
+
 	LeftTrack->SetThrottle(Throw);
 	RightTrack->SetThrottle(Throw);
+}
 
-	// TODO prevent double speed to dual controll use
+void UTankMovementComponent::IntentTurnRight(float Throw)
+{
+	if (!LeftTrack || !RightTrack) { return; }
+
+	LeftTrack->SetThrottle(Throw);
+	RightTrack->SetThrottle(-Throw);
+
+}
+
+void UTankMovementComponent::RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed)
+{
+	// No need to call super as we are replacing the functionality
+	auto TankFoward = GetOwner()->GetActorForwardVector().GetSafeNormal();
+	auto AIFowardIntention = MoveVelocity.GetSafeNormal();
+
+	auto ForwardThrow = FVector::DotProduct(TankFoward, AIFowardIntention);
+	IntentMoveFoward(ForwardThrow);
+
+	auto RightThrow = FVector::CrossProduct(TankFoward, AIFowardIntention).Z;
+	IntentTurnRight(RightThrow);
 }
