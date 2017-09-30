@@ -33,11 +33,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Fire)
 	void Fire();
 
+	UFUNCTION(BlueprintCallable, Category = Fire)
+	int32 GetAmmoCount() const;
+
 	void AimAt(FVector WorldSpaceAim);
+
+	EFiringStare GetFiringState() const;
+
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = State)
-	EFiringStare FiringState = EFiringStare::AIMING;
+	EFiringStare FiringState = EFiringStare::RELOADING;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
@@ -49,14 +58,21 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Firing)
 	float ReloadTimeInSecond = 3;
 
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	int32 AmmoCount = 3;
+
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
 	double LastFireTime = 0;
 
+	FVector AimDirection = FVector::ZeroVector;
+
 	// Sets default values for this component's properties
 	UTankAimingComponent();
 
 	void MoveBarrelToAim(FVector AimDirection);
-		
+
+	bool IsBarrelMoving();
+	
 };
