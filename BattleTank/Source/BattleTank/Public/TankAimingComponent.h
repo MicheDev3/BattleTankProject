@@ -12,7 +12,8 @@ enum class EFiringStare : uint8
 {
 	LOCKED,
 	AIMING,
-	RELOADING
+	RELOADING,
+	OutOFAmmo
 };
 
 // Forward Declaration 
